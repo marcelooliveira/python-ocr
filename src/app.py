@@ -8,9 +8,10 @@ api = Api(app)
 
 class HelloWorld(Resource):
     def get(self):
-        source_image = "https://learn.microsoft.com/azure/cognitive-services/computer-vision/media/quickstarts/presentation.png"
-        report = process_ocr(source_image)
-        return report
+        # source_image = "https://learn.microsoft.com/azure/cognitive-services/computer-vision/media/quickstarts/presentation.png"
+        source_image = "https://github.com/marcelooliveira/python-ocr/blob/main/src/sample1.jpg"
+        sum = process_ocr(source_image)
+        return sum
 
 api.add_resource(HelloWorld, '/')
 
