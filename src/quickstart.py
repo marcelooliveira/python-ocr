@@ -1,11 +1,15 @@
 import os
 import azure.ai.vision as sdk
+from statistics import median
+from decimal import Decimal
 
 def process_ocr(source_image):
+    print(f"Processing image: {source_image}")
+
     service_options = sdk.VisionServiceOptions(os.environ["VISION_ENDPOINT"],
                                            os.environ["VISION_KEY"])
 
-    vision_source = sdk.VisionSource(url=source_image)
+    vision_source = sdk.VisionSource(filename=source_image)
 
     analysis_options = sdk.ImageAnalysisOptions()
 
@@ -22,7 +26,7 @@ def process_ocr(source_image):
 
     result = image_analyzer.analyze()
 
-    number_list = []
+    string_list = []
 
     if result.reason == sdk.ImageAnalysisResultReason.ANALYZED:
         if result.caption is not None:
@@ -37,7 +41,7 @@ def process_ocr(source_image):
                 for word in line.words:
                     points_string = "{" + ", ".join([str(int(point)) for point in word.bounding_polygon]) + "}"
                     print("    Word: '{}', Bounding polygon {}, Confidence {:.4f}".format(word.content, points_string, word.confidence))
-                    number_list.append(word.content)
+                    string_list.append(word.content)
 
     else:
         error_details = sdk.ImageAnalysisErrorDetails.from_result(result)
@@ -46,8 +50,18 @@ def process_ocr(source_image):
         print("  Error code: {}".format(error_details.error_code))
         print("  Error message: {}".format(error_details.message))
 
-    sum = 0
-    for n in number_list:
-        sum = sum + int(n)
+    convert_to_decimal_list = lambda string_list: list(map(Decimal, string_list))
+    
+    number_list = convert_to_decimal_list(string_list)
+ 
+    return aggregate_operations(number_list)
 
-    return sum
+def aggregate_operations(numbers):
+    result = {
+        'sum': sum(numbers),
+        'average': sum(numbers) / len(numbers),
+        'median': median(numbers),
+        'min': min(numbers),
+        'max': max(numbers)
+    }
+    return result
