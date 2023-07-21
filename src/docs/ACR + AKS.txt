@@ -1,0 +1,60 @@
+*********
+Tutorial: Create an Azure container registry and push a container image
+https://learn.microsoft.com/en-us/azure/container-instances/container-instances-tutorial-prepare-acr
+*********
+
+az login
+
+az acr create --resource-group computer-vision --name pythonacrcomputervision --sku Basic
+
+az acr login -n pythonacrcomputervision --expose-token
+
+az acr show --name pythonacrcomputervision --query loginServer --output table
+
+	Result
+	----------------------------------
+	pythonacrcomputervision.azurecr.io
+
+docker images
+
+	REPOSITORY          TAG       IMAGE ID       CREATED      SIZE
+	src-python-docker   latest    a317ae11780b   3 days ago   212MB
+
+docker tag src-python-docker pythonacrcomputervision.azurecr.io/src-python-docker:v1
+
+az acr login --name pythonacrcomputervision
+
+docker push pythonacrcomputervision.azurecr.io/src-python-docker:v1
+
+
+*********
+Quickstart: Deploy an Azure Kubernetes Service (AKS) cluster using Azure CLI
+https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-cli
+*********
+
+az aks install-cli
+
+az aks create --resource-group computer-vision --name aks-computer-vision-2 --node-count 1 --enable-addons monitoring --generate-ssh-keys
+
+az aks update -n aks-computer-vision-2 -g computer-vision --attach-acr pythonacrcomputervision
+
+az aks get-credentials --resource-group computer-vision --name aks-computer-vision-2
+
+kubectl get services
+
+NAME                        TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)        AGE
+kubernetes                  ClusterIP      10.0.0.1      <none>          443/TCP        24h
+python-docker-service       LoadBalancer   10.0.222.85   4.157.66.178    80:31231/TCP   24h
+src-python-docker-service   LoadBalancer   10.0.100.72   52.142.35.128   80:32099/TCP   18m
+
+postman:
+
+POST
+http://52.142.35.128
+Body
+form-data
+Key: file
+Value: select files: example1.png
+SEND
+
+Body: "{\"sum\": \"121\", \"average\": \"60.5\", \"median\": \"60.5\", \"min\": \"44\", \"max\": \"77\"}"
