@@ -1,9 +1,11 @@
+"""Module providing functions for processing images."""
 import os
-import azure.ai.vision as sdk
 from statistics import median
 from decimal import Decimal
+import azure.ai.vision as sdk
 
 def process_ocr(source_image):
+    """Process OCR from an image."""
     print(f"Processing image: {source_image}")
 
     service_options = sdk.VisionServiceOptions(os.environ["VISION_ENDPOINT"],
@@ -31,32 +33,40 @@ def process_ocr(source_image):
     if result.reason == sdk.ImageAnalysisResultReason.ANALYZED:
         if result.caption is not None:
             print("Caption:")
-            print("  '{}', Confidence {:.4f}".format(result.caption.content, result.caption.confidence))
+            print(f"  '{result.caption.content}', Confidence {result.caption.confidence:.4f}")
 
         if result.text is not None:
             print("Text:")
             for line in result.text.lines:
-                points_string = "{" + ", ".join([str(int(point)) for point in line.bounding_polygon]) + "}"
-                print("  Line: '{}', Bounding polygon {}".format(line.content, points_string))
+                points_string = ("{" +
+                ", ".join([str(int(point)) for point in line.bounding_polygon]) + 
+                "}")
+                print(f"  Line: '{line.content}', Bounding polygon {points_string}")
                 for word in line.words:
-                    points_string = "{" + ", ".join([str(int(point)) for point in word.bounding_polygon]) + "}"
-                    print("    Word: '{}', Bounding polygon {}, Confidence {:.4f}".format(word.content, points_string, word.confidence))
+                    points_string = ("{" +
+                                     ", ".join([str(int(p)) for p in word.bounding_polygon]) +
+                                     "}")
+                    print(f"    Word: '{word.content}', " \
+                          "Bounding polygon {points_string}, Confidence {word.confidence:.4f}")
                     string_list.append(word.content)
 
     else:
         error_details = sdk.ImageAnalysisErrorDetails.from_result(result)
         print("Analysis failed.")
-        print("  Error reason: {}".format(error_details.reason))
-        print("  Error code: {}".format(error_details.error_code))
-        print("  Error message: {}".format(error_details.message))
+        print(f"  Error reason: {error_details.reason}")
+        print(f"  Error code: {error_details.error_code}")
+        print(f"  Error message: {error_details.message}")
 
-    convert_to_decimal_list = lambda string_list: list(map(Decimal, string_list))
-    
     number_list = convert_to_decimal_list(string_list)
- 
+
     return aggregate_operations(number_list)
 
+def convert_to_decimal_list(string_list):
+    """Returns a list of decimal numbers from a list of strings."""
+    return list(map(Decimal, string_list))
+
 def aggregate_operations(numbers):
+    """Return aggregate operations from a list of numbers."""
     result = {
         'sum': sum(numbers),
         'average': sum(numbers) / len(numbers),

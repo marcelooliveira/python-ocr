@@ -1,12 +1,14 @@
 version: '3.8'
 services:
-  python-docker:
+  intelligentapp:
     build:
       context: .
       dockerfile: Dockerfile
+    image: intelligent-app
     ports:
       - 5000:5000
+    container_name: intelligent-app
     environment:
       - FLASK_DEBUG=1
-      - VISION_KEY=97c1ed0586e94038b8ba331f3dda265c
-      - VISION_ENDPOINT=https://python-ocr-computer-vision.cognitiveservices.azure.com/
+      - VISION_KEY=da1bfec1e8204e1091459c3853af3339
+      - VISION_ENDPOINT=https://my-cognitive-service-1619.cognitiveservices.azure.com/

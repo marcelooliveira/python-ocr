@@ -5,26 +5,26 @@ https://learn.microsoft.com/en-us/azure/container-instances/container-instances-
 
 az login
 
-az acr create --resource-group computer-vision --name pythonacrcomputervision --sku Basic
+az acr create --resource-group computer-vision --name intelligentapp --sku Basic
 
-az acr login -n pythonacrcomputervision --expose-token
+az acr login -n intelligentapp --expose-token
 
-az acr show --name pythonacrcomputervision --query loginServer --output table
+az acr show --name intelligentapp --query loginServer --output table
 
 	Result
 	----------------------------------
-	pythonacrcomputervision.azurecr.io
+	intelligentapp.azurecr.io
 
 docker images
 
 	REPOSITORY          TAG       IMAGE ID       CREATED      SIZE
-	src-python-docker   latest    a317ae11780b   3 days ago   212MB
+	intelligentapp   latest    a317ae11780b   3 days ago   212MB
 
-docker tag src-python-docker pythonacrcomputervision.azurecr.io/src-python-docker:v1
+docker tag intelligentapp intelligentapp.azurecr.io/intelligentapp:v1
 
-az acr login --name pythonacrcomputervision
+az acr login --name intelligentapp
 
-docker push pythonacrcomputervision.azurecr.io/src-python-docker:v1
+docker push intelligentapp.azurecr.io/intelligentapp:v1
 
 
 *********
@@ -34,18 +34,18 @@ https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-cli
 
 az aks install-cli
 
-az aks create --resource-group computer-vision --name aks-computer-vision-2 --node-count 1 --enable-addons monitoring --generate-ssh-keys
+az aks create --resource-group computer-vision --name aks-intelligent-app --node-count 1 --enable-addons monitoring --generate-ssh-keys
 
-az aks update -n aks-computer-vision-2 -g computer-vision --attach-acr pythonacrcomputervision
+az aks update -n aks-intelligent-app -g computer-vision --attach-acr intelligentapp
 
-az aks get-credentials --resource-group computer-vision --name aks-computer-vision-2
+az aks get-credentials --resource-group computer-vision --name aks-intelligent-app
 
 kubectl get services
 
-NAME                        TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)        AGE
-kubernetes                  ClusterIP      10.0.0.1      <none>          443/TCP        24h
-python-docker-service       LoadBalancer   10.0.222.85   4.157.66.178    80:31231/TCP   24h
-src-python-docker-service   LoadBalancer   10.0.100.72   52.142.35.128   80:32099/TCP   18m
+NAME                     TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)        AGE
+kubernetes               ClusterIP      10.0.0.1      <none>          443/TCP        24h
+intelligentapp-service   LoadBalancer   10.0.222.85   4.157.66.178    80:31231/TCP   24h
+intelligentapp-service   LoadBalancer   10.0.100.72   52.142.35.128   80:32099/TCP   18m
 
 postman:
 
