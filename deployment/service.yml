@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: src-python-docker-service
+  name: intelligent-app-service
 spec:
   type: LoadBalancer
   ports:
@@ -12,4 +12,4 @@ spec:
       targetPort: 5000
       name: port5000
   selector:
-    app: src-python-docker
+    app: intelligent-app

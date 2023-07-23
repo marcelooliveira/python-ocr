@@ -3,22 +3,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: src-python-docker
+  name: intelligent-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: src-python-docker
+      app: intelligent-app
   template:
     metadata:
       labels:
-        app: src-python-docker
+        app: intelligent-app
     spec:
       nodeSelector:
         kubernetes.io/os: linux
       containers:
-        - name: src-python-docker
-          image: pythonacrcomputervision.azurecr.io/src-python-docker:v1
+        - name: intelligent-app
+          image: intelligentapp.azurecr.io/intelligent-app:v1
           resources:
             limits:
               memory: 512Mi
@@ -32,6 +32,6 @@ spec:
             - name: FLASK_DEBUG
               value: "1"
             - name: VISION_KEY
-              value: 97c1ed0586e94038b8ba331f3dda265c
+              value: da1bfec1e8204e1091459c3853af3339
             - name: VISION_ENDPOINT
-              value: https://python-ocr-computer-vision.cognitiveservices.azure.com/
+              value: https://my-cognitive-service-1619.cognitiveservices.azure.com/
