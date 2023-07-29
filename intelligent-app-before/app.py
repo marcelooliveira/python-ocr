@@ -4,7 +4,6 @@ import json
 
 from flask import Flask, request
 from flask_restful import Resource, Api
-from ocr_helper import process_ocr
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__,
@@ -31,7 +30,6 @@ class UploadHandler(Resource):
 
         # Get Text type fields
         form = request.form.to_dict()
-        print(form)
 
         if 'file' not in request.files:
             return json.dumps({ "success": False, "error": "No file part"})
@@ -40,11 +38,12 @@ class UploadHandler(Resource):
         if file and self.allowed_file(file.filename):
             filename = secure_filename(file.filename)
             upload_folder = "static/files"
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
             local_file_path = os.path.join(upload_folder, filename)
             file.save(local_file_path)
 
-            aggregates = process_ocr(local_file_path)
-            return json.dumps(aggregates, default=str)
+            return f"File {filename} uploaded successfully to folder: {upload_folder}"
 
 api.add_resource(UploadHandler, "/")
 
