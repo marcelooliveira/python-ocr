@@ -1,0 +1,15 @@
+# service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: intelligent-app-service
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      name: port5000
+  selector:
+    app: intelligent-app
