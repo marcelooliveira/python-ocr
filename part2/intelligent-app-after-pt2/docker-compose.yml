@@ -12,3 +12,8 @@ services:
       - FLASK_DEBUG=1
       - VISION_KEY=da1bfec1e8204e1091459c3853af3339
       - VISION_ENDPOINT=https://my-cognitive-service-1619.cognitiveservices.azure.com/
+      - MONGO_DB_CONNECTION_STRING=mongodb://intelligent-app-cosmos-account:QemVKrxjMfx72hNPfdCMFxXGgN1PGCXOGLsthly7ucb1ID12QH95t5zMg2KV9458Q8IVVIa5p9moACDbyiiKdg==@intelligent-app-cosmos-account.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@intelligent-app-cosmos-account@
+      - MONGO_DB_NAME=intelligent-app-db
+      - MONGO_COLLECTION_ID=image-analysis
+      - TABLE_DB_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=intelligent-app-cosmos-table-account;AccountKey=FXUpl0pnn307RB4afzSpWQfhf7sFnjOMtNRpalBtjjZHzbeUaACBXM3YyBjTZsCFvIdyMna746owACDbYDD7UA==;TableEndpoint=https://intelligent-app-cosmos-table-account.table.cosmos.azure.com:443/;
+      
