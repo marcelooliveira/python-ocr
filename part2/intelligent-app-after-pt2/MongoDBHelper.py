@@ -2,10 +2,13 @@ import os
 from pymongo import MongoClient
 
 class MongoDBHelper:
-    def __init__(self, connection_string, db_name, collection_name):
+    def __init__(self):
+        connection_string = os.environ["MONGO_DB_CONNECTION_STRING"]
+        db = os.environ["MONGO_DB_NAME"]
+        collection = os.environ["MONGO_COLLECTION_ID"]
         self.client = MongoClient(connection_string)
-        self.db = self.client[db_name]
-        self.collection = self.db[collection_name]
+        self.db = self.client[db]
+        self.collection = self.db[collection]
 
     def create_document(self, document):
         result = self.collection.insert_one(document)

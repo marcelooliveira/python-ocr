@@ -7,6 +7,8 @@ import azure.ai.vision as sdk
 from azure.cosmosdb.table.tableservice import TableService
 from azure.cosmosdb.table.models import Entity
 
+from TableDBHelper import TableDBHelper
+
 def process_ocr(source_image):
   service_options = sdk.VisionServiceOptions(os.environ["VISION_ENDPOINT"],
                        os.environ["VISION_KEY"])
@@ -89,42 +91,20 @@ def process_ocr(source_image):
 
       aggregate_result = aggregate_operations(number_list)
 
-      # Your Azure Cosmos DB Table API connection string
       insert_entity(inserted_id, aggregate_result)
-
       return aggregate_result
 
   else:
-    error_details = sdk.ImageAnalysisErrorDetails.from_result(result)
-
-    return error_details
+    return sdk.ImageAnalysisErrorDetails.from_result(result)
 
 def insert_entity(inserted_id, aggregate_result):
-    connection_string = os.environ["TABLE_DB_CONNECTION_STRING"]
-
-      # Create a TableService client
-    table_service = TableService(connection_string=connection_string)
-
-      # Define your data structure
-    data = Entity()
-    data.PartitionKey = "data_partition"
-    data.RowKey = inserted_id
-    data.sum = float(aggregate_result["sum"])
-    data.average = float(aggregate_result["average"])
-    data.median = float(aggregate_result["median"])
-    data.min = float(aggregate_result["min"])
-    data.max = float(aggregate_result["max"])
-
-      # Insert the entity into the table
-    table_service.insert_entity('AggregateResults', data)
+    # connection_string = os.environ["TABLE_DB_CONNECTION_STRING"]
+    # table_service = TableService(connection_string=connection_string)
+    table_helper = TableDBHelper()
+    table_helper.create_document(inserted_id, aggregate_result)
 
 def insert_document(analysis_result):
-    connection_string = os.environ["MONGO_DB_CONNECTION_STRING"]
-    db_name = os.environ["MONGO_DB_NAME"]
-    collection_name = os.environ["MONGO_COLLECTION_ID"]
-
-    db_helper = MongoDBHelper(connection_string, db_name, collection_name)
-
+    db_helper = MongoDBHelper()
     inserted_id = db_helper.create_document(analysis_result)
     print("Inserted document ID:", str(inserted_id))
     return str(inserted_id)
