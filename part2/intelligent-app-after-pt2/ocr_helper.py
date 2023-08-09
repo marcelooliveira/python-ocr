@@ -2,12 +2,8 @@ import json
 import os
 from statistics import median
 from decimal import Decimal
-from MongoDBHelper import MongoDBHelper
+from CosmosDBHelper import CosmosDBHelper
 import azure.ai.vision as sdk
-from azure.cosmosdb.table.tableservice import TableService
-from azure.cosmosdb.table.models import Entity
-
-from TableDBHelper import TableDBHelper
 
 def process_ocr(source_image):
   service_options = sdk.VisionServiceOptions(os.environ["VISION_ENDPOINT"],
@@ -79,35 +75,35 @@ def process_ocr(source_image):
           line_result["words"].append(word_result)
 
         analysis_result["text"]["lines"].append(line_result)
+        document_id = os.path.basename(source_image).rsplit('.', 1)[0]
+        analysis_result["id"] = document_id
+        analysis_result["partitionKey"] = "Partition1"
 
       local_file_path = result_file
       results_file = open(local_file_path, "w")
       results_file.write(json.dumps(analysis_result))
       results_file.close()
 
-      inserted_id = insert_document(analysis_result)
+      inserted_id = insert_analysis(analysis_result)
 
       number_list = convert_to_decimal_list(string_list)
 
       aggregate_result = aggregate_operations(number_list)
 
-      insert_entity(inserted_id, aggregate_result)
+      insert_aggregate_result(inserted_id, aggregate_result)
       return aggregate_result
 
   else:
     return sdk.ImageAnalysisErrorDetails.from_result(result)
 
-def insert_entity(inserted_id, aggregate_result):
-    # connection_string = os.environ["TABLE_DB_CONNECTION_STRING"]
-    # table_service = TableService(connection_string=connection_string)
-    table_helper = TableDBHelper()
-    table_helper.create_document(inserted_id, aggregate_result)
+def insert_aggregate_result(inserted_id, aggregate_result):
+    db_helper = CosmosDBHelper()
+    db_helper.create_aggregate_result(inserted_id, aggregate_result)
 
-def insert_document(analysis_result):
-    db_helper = MongoDBHelper()
-    inserted_id = db_helper.create_document(analysis_result)
-    print("Inserted document ID:", str(inserted_id))
-    return str(inserted_id)
+def insert_analysis(analysis_result):
+    db_helper = CosmosDBHelper()
+    doc = db_helper.create_analysis(analysis_result)
+    return str(doc["id"])
 
 def convert_to_decimal_list(string_list):
   return list(map(Decimal, string_list))
