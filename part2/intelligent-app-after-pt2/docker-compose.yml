@@ -17,4 +17,4 @@ services:
       - COSMOS_ACCOUNT_KEY=SYGOk0GFwbJVeCKazrBz97XisSqwlgHwNUA2sDHLPsBua3MMlYMeVyxKuzTdR5UZ8v3w92byc6IiACDb0wq7aw==
       - COSMOS_DATABASE_ID=IntelligentAppDB
       - COSMOS_IMAGE_ANALYSIS_CONTAINER_ID=ImageAnalysisContainer
-      - COSMOS_TABLE_CONTAINER_ID=AggregateResultsContainer      
+      - COSMOS_AGGREGATE_RESULTS_CONTAINER_ID=AggregateResultsContainer      

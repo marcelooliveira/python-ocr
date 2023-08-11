@@ -35,3 +35,15 @@ spec:
               value: da1bfec1e8204e1091459c3853af3339
             - name: VISION_ENDPOINT
               value: https://my-cognitive-service-1619.cognitiveservices.azure.com/
+            - name: COSMOS_ACCOUNT_CONNECTION_STRING
+              value: AccountEndpoint=https://intelligent-app-cosmos-db-account.documents.azure.com:443/;AccountKey=SYGOk0GFwbJVeCKazrBz97XisSqwlgHwNUA2sDHLPsBua3MMlYMeVyxKuzTdR5UZ8v3w92byc6IiACDb0wq7aw==;
+            - name: COSMOS_ACCOUNT_HOST
+              value: https://intelligent-app-cosmos-db-account.documents.azure.com:443/
+            - name: COSMOS_ACCOUNT_KEY
+              value: SYGOk0GFwbJVeCKazrBz97XisSqwlgHwNUA2sDHLPsBua3MMlYMeVyxKuzTdR5UZ8v3w92byc6IiACDb0wq7aw==
+            - name: COSMOS_DATABASE_ID
+              value: IntelligentAppDB
+            - name: COSMOS_IMAGE_ANALYSIS_CONTAINER_ID
+              value: ImageAnalysisContainer
+            - name: COSMOS_AGGREGATE_RESULTS_CONTAINER_ID
+              value: AggregateResultsContainer
