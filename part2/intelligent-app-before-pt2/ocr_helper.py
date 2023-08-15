@@ -24,26 +24,29 @@ def process_ocr(source_image):
 
   result = image_analyzer.analyze()
 
+  ocr_result = get_ocr_result(result)
+
+  return ocr_result
+
+def get_ocr_result(result):
   string_list = []
 
-  if result.reason == sdk.ImageAnalysisResultReason.ANALYZED:
+  if result.reason != sdk.ImageAnalysisResultReason.ANALYZED:
+    return sdk.ImageAnalysisErrorDetails.from_result(result)
+  else:
     if result.text is not None:
       for line in result.text.lines:
-        points_string = ("{" +
-        ", ".join([str(int(point)) for point in line.bounding_polygon]) + 
-        "}")
         for word in line.words:
-          points_string = ("{" +
-                   ", ".join([str(int(p)) for p in word.bounding_polygon]) +
-                   "}")
           string_list.append(word.content)
-
-  else:
-    error_details = sdk.ImageAnalysisErrorDetails.from_result(result)
 
   number_list = convert_to_decimal_list(string_list)
 
-  return aggregate_operations(number_list)
+  aggregate_result = aggregate_operations(number_list)
+
+  return {
+    "aggregate_result": aggregate_result,
+    "numbers_read": string_list
+  }
 
 def convert_to_decimal_list(string_list):
   return list(map(Decimal, string_list))
